@@ -6,20 +6,27 @@
     <title>Quiz Stranger Things</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
-        :root { --neon-red: #ff0033; --neon-green: #28a745; --dark-bg: #050505; --glass: rgba(20, 20, 20, 0.9); }
+        :root { --neon-red: #ff0033; --neon-green: #28a745; --dark-bg: #050505; --glass: rgba(20, 20, 20, 0.95); }
         
-        /* CSS LIMPO PARA EVITAR CORTES */
-        html, body { margin: 0; padding: 0; width: 100%; height: auto; overflow: hidden; }
-        
+        /* RESET TOTAL PARA EVITAR CORTES */
+        html { min-height: 100%; }
         body { 
+            margin: 0; padding: 0; width: 100%; 
+            /* Importante: permite que o corpo cresça o quanto precisar */
+            height: auto; 
+            min-height: 100vh;
             font-family: 'Share Tech Mono', monospace; 
             background-color: var(--dark-bg); 
             color: #e0e0e0; 
-            padding-bottom: 50px; /* Margem extra no fundo */
             background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%);
             display: flex; 
             flex-direction: column; 
             align-items: center; 
+            /* Espaço extra no final para scroll seguro */
+            padding-bottom: 80px; 
+            box-sizing: border-box;
+            overflow-x: hidden; /* Apenas esconde scroll lateral */
+            overflow-y: visible; /* Garante que altura seja lida corretamente */
         }
         
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMikiLz48L3N2Zz4='); animation: floating 60s linear infinite; pointer-events: none; z-index: 0; opacity: 0.6; }
@@ -36,7 +43,7 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8); 
             max-width: 600px; 
             width: 90%; 
-            margin-top: 20px;
+            margin-top: 40px; /* Margem superior segura */
             text-align: center; 
             border-top: 3px solid var(--neon-red); 
         }
@@ -54,6 +61,7 @@
         .start-btn, .next-btn, .restart-btn { background-color: var(--neon-red); color: white; border: none; padding: 15px 30px; width: 100%; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; margin-top: 15px; border-radius: 5px; transition: 0.3s; }
         .start-btn:hover, .next-btn:hover { background-color: #ff3355; transform: scale(1.02); }
         .start-btn { font-size: 1.5rem; animation: pulseBtn 2s infinite; }
+        
         #feedback-area { display: none; margin-top: 25px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid #333; animation: slideUp 0.3s ease-out; }
         .feedback-img { max-width: 100%; border-radius: 8px; border: 2px solid #fff; margin-top: 10px; }
         .score-display { font-size: 2rem; color: var(--neon-red); margin: 10px 0; }
@@ -65,7 +73,7 @@
         @keyframes flicker { 0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon-red); } 50% { opacity: 0.6; text-shadow: none; } }
         @keyframes pulseBtn { 0% { box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); } 50% { box-shadow: 0 0 30px rgba(255, 0, 51, 0.8); } 100% { box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @media (max-width: 600px) { h1 { font-size: 2rem; } .quiz-container { padding: 1.5rem; width: 95%; } }
+        @media (max-width: 600px) { h1 { font-size: 2rem; } .quiz-container { padding: 1.5rem; width: 95%; margin-top: 20px; } }
     </style>
 </head>
 <body>
@@ -74,33 +82,35 @@
     <audio id="sfx-wrong" preload="auto"><source src="erro.mp3" type="audio/mpeg"></audio>
 
     <div class="scanlines"></div>
-    <div class="quiz-container" id="main-container">
-        <div id="intro-box">
-            <h1>Stranger Quiz</h1>
-            <p class="intro-text">Prepare-se para entrar no Mundo Invertido.</p>
-            <p style="font-size: 0.8rem; color: #666;">(Clique para ativar o som 🎧)</p>
-            <button class="start-btn" onclick="startQuiz()">COMEÇAR A MISSÃO</button>
-        </div>
-        <div id="quiz-box" style="display: none;">
-            <h1>Stranger Quiz</h1>
-            <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; display: inline-block;">PERGUNTA <span id="current-q">1</span> DE 17</p>
-            <div id="question-text" class="question-text">...</div>
-            <div id="options" class="options-container"></div>
-            <div id="feedback-area">
-                <h3 id="feedback-title"></h3>
-                <p id="feedback-msg"></p>
-                <img id="feedback-gif" class="feedback-img" src="">
-                <button id="next-btn" class="next-btn" onclick="nextQuestion()">Próxima >></button>
+    <div id="main-wrapper" style="width: 100%; display: flex; justify-content: center;">
+        <div class="quiz-container" id="main-container">
+            <div id="intro-box">
+                <h1>Stranger Quiz</h1>
+                <p class="intro-text">Prepare-se para entrar no Mundo Invertido.</p>
+                <p style="font-size: 0.8rem; color: #666;">(Clique para ativar o som 🎧)</p>
+                <button class="start-btn" onclick="startQuiz()">COMEÇAR A MISSÃO</button>
             </div>
+            <div id="quiz-box" style="display: none;">
+                <h1>Stranger Quiz</h1>
+                <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; display: inline-block;">PERGUNTA <span id="current-q">1</span> DE 17</p>
+                <div id="question-text" class="question-text">...</div>
+                <div id="options" class="options-container"></div>
+                <div id="feedback-area">
+                    <h3 id="feedback-title"></h3>
+                    <p id="feedback-msg"></p>
+                    <img id="feedback-gif" class="feedback-img" src="" onload="sendHeight()">
+                    <button id="next-btn" class="next-btn" onclick="nextQuestion()">Próxima >></button>
+                </div>
+            </div>
+            <div id="result-box" style="display: none;">
+                <h1>Fim da Linha</h1>
+                <p class="score-display"><span id="score"></span> / 17 ACERTOS</p>
+                <p id="final-msg" class="question-text"></p>
+                <img id="final-gif" class="feedback-img" src="" onload="sendHeight()">
+                <button class="restart-btn" onclick="location.reload()">Jogar Novamente</button>
+            </div>
+            <div class="credits">Desenvolvido por: <strong>Ayuri Reis</strong> / Central de dados do <strong>OPOVO+</strong></div>
         </div>
-        <div id="result-box" style="display: none;">
-            <h1>Fim da Linha</h1>
-            <p class="score-display"><span id="score"></span> / 17 ACERTOS</p>
-            <p id="final-msg" class="question-text"></p>
-            <img id="final-gif" class="feedback-img" src="">
-            <button class="restart-btn" onclick="location.reload()">Jogar Novamente</button>
-        </div>
-        <div class="credits">Desenvolvido por: <strong>Ayuri Reis</strong> / Central de dados do <strong>OPOVO+</strong></div>
     </div>
 
     <script>
@@ -205,10 +215,13 @@
                 ui.nextBtn.innerText = "Próxima >>";
             }
             
-            // CORREÇÃO: Força o envio da altura 3 vezes para garantir que o GIF carregue e o site ajuste
-            sendHeight(); 
-            setTimeout(sendHeight, 100); 
+            // ATUALIZAÇÃO FORÇADA DE ALTURA
+            // Envia imediatamente
+            sendHeight();
+            // Envia de novo a cada 200ms para pegar o carregamento do GIF
+            setTimeout(sendHeight, 200); 
             setTimeout(sendHeight, 500); 
+            setTimeout(sendHeight, 1000); 
         }
 
         function triggerAnim(cls) {
@@ -254,14 +267,24 @@
             sendHeight();
         }
 
-        // --- CÁLCULO DE ALTURA AJUSTADO ---
+        // --- SISTEMA DE ALTURA CALCULADA (ROBUSTO) ---
         function sendHeight() {
-            const quizContainer = document.getElementById('main-container');
-            if(quizContainer) {
-                // Adiciona 100px de folga extra para garantir que o botão e o GIF caibam
-                const height = quizContainer.offsetHeight + 100;
-                window.parent.postMessage({ frameHeight: height }, "*");
-            }
+            // Pega o corpo e o HTML
+            const body = document.body;
+            const html = document.documentElement;
+
+            // Calcula a altura real pegando o MAIOR valor entre os métodos
+            // Isso evita que o scrollHeight ignore margens ou posições absolutas
+            const height = Math.max( 
+                body.scrollHeight, 
+                body.offsetHeight, 
+                html.clientHeight, 
+                html.scrollHeight, 
+                html.offsetHeight 
+            );
+
+            // Envia com + 60px de folga para garantir
+            window.parent.postMessage({ frameHeight: height + 60 }, "*");
         }
 
         window.addEventListener('load', sendHeight);
