@@ -8,61 +8,41 @@
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
         :root { --neon-red: #ff0033; --neon-green: #28a745; --dark-bg: #050505; --glass: rgba(20, 20, 20, 0.95); }
         
-        /* RESET TOTAL */
-        html { min-height: 100%; }
+        /* RESET */
+        html { min-height: 100%; height: auto; }
         body { 
-            margin: 0; 
-            padding: 20px 0 60px 0; /* Espaço extra embaixo para não cortar */
-            width: 100%; 
-            height: auto; /* Deixa crescer livremente */
+            margin: 0; padding: 0; width: 100%; height: auto;
             font-family: 'Share Tech Mono', monospace; 
             background-color: var(--dark-bg); 
             color: #e0e0e0; 
             background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%);
-            text-align: center; /* Centraliza conteúdo */
-            overflow: hidden; /* O Iframe controla o scroll */
+            display: flex; flex-direction: column; align-items: center; 
+            overflow: hidden; 
+            /* AUMENTAMOS O ESPAÇO EMBAIXO PARA EVITAR CORTE */
+            padding-bottom: 60px; 
         }
         
-        /* FUNDO ANIMADO */
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMikiLz48L3N2Zz4='); animation: floating 60s linear infinite; pointer-events: none; z-index: -1; opacity: 0.6; }
         .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; pointer-events: none; z-index: 10; }
         
-        /* BOTÃO MUTE (FIXO NA TELA) */
+        /* BOTÃO MUTE */
         .mute-btn {
-            position: fixed; /* Fica fixo na tela */
-            top: 10px;
-            right: 10px;
-            z-index: 9999; /* Fica acima de tudo */
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid var(--neon-red);
-            color: var(--neon-red);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-            box-shadow: 0 0 10px var(--neon-red);
+            position: fixed; top: 10px; right: 10px; z-index: 9999;
+            background: rgba(0, 0, 0, 0.8); border: 2px solid var(--neon-red); color: var(--neon-red);
+            width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.3s; box-shadow: 0 0 10px var(--neon-red);
         }
         .mute-btn:hover { transform: scale(1.1); background: var(--neon-red); color: black; }
 
-        /* CONTAINER DO QUIZ */
         .quiz-container { 
-            position: relative; 
-            display: inline-block; /* Ajusta ao tamanho do conteúdo */
-            background: var(--glass); 
-            backdrop-filter: blur(5px); 
-            padding: 2rem; 
-            border-radius: 15px; 
-            border: 1px solid #333; 
+            position: relative; z-index: 1; 
+            background: var(--glass); backdrop-filter: blur(5px); 
+            padding: 2rem; border-radius: 15px; border: 1px solid #333; 
             box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8); 
-            max-width: 600px; 
-            width: 90%; 
-            margin: 0 auto; /* Centraliza */
-            border-top: 3px solid var(--neon-red); 
+            max-width: 600px; width: 90%; 
+            margin-top: 20px; 
+            text-align: center; border-top: 3px solid var(--neon-red); 
         }
 
         h1 { font-family: 'Creepster', cursive; color: var(--neon-red); font-size: 3rem; margin: 0 0 20px 0; text-shadow: 0 0 10px var(--neon-red), 0 0 20px black; letter-spacing: 3px; animation: flicker 3s infinite alternate; }
@@ -79,14 +59,11 @@
         .start-btn:hover, .next-btn:hover { background-color: #ff3355; transform: scale(1.02); }
         .start-btn { font-size: 1.5rem; animation: pulseBtn 2s infinite; }
         
-        /* FEEDBACK AREA */
         #feedback-area { display: none; margin-top: 25px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid #333; animation: slideUp 0.3s ease-out; }
         .feedback-img { max-width: 100%; min-height: 200px; border-radius: 8px; border: 2px solid #fff; margin-top: 10px; background: #111; }
         
         .score-display { font-size: 2rem; color: var(--neon-red); margin: 10px 0; }
         .credits { margin-top: 30px; font-size: 0.75rem; color: #666; border-top: 1px solid #333; padding-top: 15px; letter-spacing: 1px; opacity: 0.8; }
-        
-        /* ANIMAÇÕES */
         .correct-flash-anim { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; animation: flash-green 0.6s ease-out forwards; }
         .glitch-overlay-anim { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; background: rgba(255, 0, 51, 0.1); mix-blend-mode: hard-light; animation: glitch-screen 0.5s linear forwards; }
         @keyframes flash-green { 0% { background-color: rgba(40, 167, 69, 0.4); } 100% { background-color: transparent; } }
@@ -106,33 +83,35 @@
     
     <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Som">🔊</button>
 
-    <div class="quiz-container" id="main-container">
-        <div id="intro-box">
-            <h1>Stranger Quiz</h1>
-            <p class="intro-text">Prepare-se para entrar no Mundo Invertido.</p>
-            <p style="font-size: 0.8rem; color: #666;">(Clique para ativar o som 🎧)</p>
-            <button class="start-btn" onclick="startQuiz()">COMEÇAR A MISSÃO</button>
-        </div>
-        <div id="quiz-box" style="display: none;">
-            <h1>Stranger Quiz</h1>
-            <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; display: inline-block;">PERGUNTA <span id="current-q">1</span> DE 17</p>
-            <div id="question-text" class="question-text">...</div>
-            <div id="options" class="options-container"></div>
-            <div id="feedback-area">
-                <h3 id="feedback-title"></h3>
-                <p id="feedback-msg"></p>
-                <img id="feedback-gif" class="feedback-img" src="" onload="sendHeight()">
-                <button id="next-btn" class="next-btn" onclick="nextQuestion()">Próxima >></button>
+    <div id="wrapper" style="width: 100%; display: flex; justify-content: center; align-items: flex-start;">
+        <div class="quiz-container" id="main-container">
+            <div id="intro-box">
+                <h1>Stranger Quiz</h1>
+                <p class="intro-text">Prepare-se para entrar no Mundo Invertido.</p>
+                <p style="font-size: 0.8rem; color: #666;">(Clique para ativar o som 🎧)</p>
+                <button class="start-btn" onclick="startQuiz()">COMEÇAR A MISSÃO</button>
             </div>
+            <div id="quiz-box" style="display: none;">
+                <h1>Stranger Quiz</h1>
+                <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; display: inline-block;">PERGUNTA <span id="current-q">1</span> DE 17</p>
+                <div id="question-text" class="question-text">...</div>
+                <div id="options" class="options-container"></div>
+                <div id="feedback-area">
+                    <h3 id="feedback-title"></h3>
+                    <p id="feedback-msg"></p>
+                    <img id="feedback-gif" class="feedback-img" src="" onload="sendHeight()">
+                    <button id="next-btn" class="next-btn" onclick="nextQuestion()">Próxima >></button>
+                </div>
+            </div>
+            <div id="result-box" style="display: none;">
+                <h1>Fim da Linha</h1>
+                <p class="score-display"><span id="score"></span> / 17 ACERTOS</p>
+                <p id="final-msg" class="question-text"></p>
+                <img id="final-gif" class="feedback-img" src="" onload="sendHeight()">
+                <button class="restart-btn" onclick="location.reload()">Jogar Novamente</button>
+            </div>
+            <div class="credits">Desenvolvido por: <strong>Ayuri Reis</strong> / Central de dados do <strong>OPOVO+</strong></div>
         </div>
-        <div id="result-box" style="display: none;">
-            <h1>Fim da Linha</h1>
-            <p class="score-display"><span id="score"></span> / 17 ACERTOS</p>
-            <p id="final-msg" class="question-text"></p>
-            <img id="final-gif" class="feedback-img" src="" onload="sendHeight()">
-            <button class="restart-btn" onclick="location.reload()">Jogar Novamente</button>
-        </div>
-        <div class="credits">Desenvolvido por: <strong>Ayuri Reis</strong> / Central de dados do <strong>OPOVO+</strong></div>
     </div>
 
     <script>
@@ -189,7 +168,7 @@
             ui.feedbackMsg.innerText = idx === q.a ? "Isso aí!" : `A resposta certa era: ${q.opts[q.a]}`; ui.feedbackGif.src = q.gif; ui.feedbackArea.style.display = 'block';
             ui.nextBtn.innerText = currentIdx === questions.length - 1 ? "VER RESULTADO FINAL" : "Próxima >>";
             
-            // ATUALIZA ALTURA VÁRIAS VEZES
+            // FORÇA ALTURA COM A "GORDURA" EXTRA DE 150px
             sendHeight(); setTimeout(sendHeight, 200); setTimeout(sendHeight, 500); setTimeout(sendHeight, 1000);
         }
 
@@ -206,12 +185,13 @@
             sendHeight(); setTimeout(sendHeight, 500);
         }
 
-        // --- SISTEMA DE ALTURA 100% PRECISO ---
+        // --- CÁLCULO DE ALTURA COM "FOLGA EXTRA" ---
         function sendHeight() {
-            // Mede a altura real do conteúdo visível + folga
-            const h = Math.max(document.body.scrollHeight, document.body.offsetHeight);
-            window.parent.postMessage({ frameHeight: h + 50 }, "*");
+            const height = document.documentElement.scrollHeight;
+            // AQUI ESTÁ A MÁGICA: +150px GARANTIDOS PARA O BOTÃO PRÓXIMA
+            window.parent.postMessage({ frameHeight: height + 150 }, "*");
         }
+
         window.addEventListener('load', sendHeight);
         window.addEventListener('resize', sendHeight);
         new ResizeObserver(sendHeight).observe(document.body);
