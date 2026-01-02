@@ -8,7 +8,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
         :root { --neon-red: #ff0033; --neon-green: #28a745; --dark-bg: #050505; --glass: rgba(20, 20, 20, 0.95); }
         
-        /* ESTRUTURA FLUIDA - O SEGREDO DO AUTO-HEIGHT */
         html { min-height: 100%; height: auto; }
         body { 
             margin: 0; padding: 0; width: 100%; height: auto;
@@ -17,8 +16,8 @@
             color: #e0e0e0; 
             background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%);
             display: flex; flex-direction: column; align-items: center; 
-            overflow: hidden; /* O iframe vai controlar o scroll, não o body */
-            padding-bottom: 20px;
+            overflow: hidden; 
+            padding-bottom: 40px;
         }
         
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMikiLz48L3N2Zz4='); animation: floating 60s linear infinite; pointer-events: none; z-index: 0; opacity: 0.6; }
@@ -30,8 +29,33 @@
             padding: 2rem; border-radius: 15px; border: 1px solid #333; 
             box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8); 
             max-width: 600px; width: 90%; 
-            margin-top: 30px; margin-bottom: 30px;
+            margin-top: 20px; 
             text-align: center; border-top: 3px solid var(--neon-red); 
+        }
+
+        /* BOTÃO DE MUTE */
+        .mute-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .mute-btn:hover {
+            background: var(--neon-red);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-red);
         }
 
         h1 { font-family: 'Creepster', cursive; color: var(--neon-red); font-size: 3rem; margin: 0 0 20px 0; text-shadow: 0 0 10px var(--neon-red), 0 0 20px black; letter-spacing: 3px; animation: flicker 3s infinite alternate; }
@@ -48,7 +72,7 @@
         .start-btn:hover, .next-btn:hover { background-color: #ff3355; transform: scale(1.02); }
         .start-btn { font-size: 1.5rem; animation: pulseBtn 2s infinite; }
         #feedback-area { display: none; margin-top: 25px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid #333; animation: slideUp 0.3s ease-out; }
-        .feedback-img { max-width: 100%; border-radius: 8px; border: 2px solid #fff; margin-top: 10px; }
+        .feedback-img { max-width: 100%; min-height: 200px; border-radius: 8px; border: 2px solid #fff; margin-top: 10px; background: #111; }
         .score-display { font-size: 2rem; color: var(--neon-red); margin: 10px 0; }
         .credits { margin-top: 30px; font-size: 0.75rem; color: #666; border-top: 1px solid #333; padding-top: 15px; letter-spacing: 1px; opacity: 0.8; }
         .correct-flash-anim { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; animation: flash-green 0.6s ease-out forwards; }
@@ -69,6 +93,9 @@
     <div class="scanlines"></div>
     <div id="wrapper" style="width: 100%; display: flex; justify-content: center; align-items: flex-start;">
         <div class="quiz-container" id="main-container">
+            
+            <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Ligar/Desligar Som">🔊</button>
+
             <div id="intro-box">
                 <h1>Stranger Quiz</h1>
                 <p class="intro-text">Prepare-se para entrar no Mundo Invertido.</p>
@@ -102,7 +129,29 @@
         const bgMusic = document.getElementById('bg-music');
         const sfxCorrect = document.getElementById('sfx-correct');
         const sfxWrong = document.getElementById('sfx-wrong');
+        const muteBtn = document.getElementById('mute-btn');
+        
+        let isMuted = false;
         bgMusic.volume = 0.4; sfxCorrect.volume = 0.6; sfxWrong.volume = 0.5;
+
+        // FUNÇÃO DE MUTE
+        function toggleMute() {
+            isMuted = !isMuted;
+            bgMusic.muted = isMuted;
+            sfxCorrect.muted = isMuted;
+            sfxWrong.muted = isMuted;
+            
+            // Troca o ícone
+            if(isMuted) {
+                muteBtn.innerText = "🔇";
+                muteBtn.style.borderColor = "#666";
+                muteBtn.style.color = "#666";
+            } else {
+                muteBtn.innerText = "🔊";
+                muteBtn.style.borderColor = "var(--neon-red)";
+                muteBtn.style.color = "var(--neon-red)";
+            }
+        }
 
         const questions = [
             { q: "Em que cidade se passa Stranger Things?", opts: ["Chicago", "Nova York", "Seattle", "Hawkins"], a: 3, gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3NoeHB4cjFhYTZwNXI3b3lkdXY4cXBmNGM2NGNjODZqM3N4bzlmdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/T9JPznkGDAxYC8m7yC/giphy.gif" },
@@ -202,9 +251,10 @@
             
             // FORÇA ENVIO DE ALTURA VARIAS VEZES (Para pegar o GIF carregando)
             sendHeight();
-            setTimeout(sendHeight, 100);
-            setTimeout(sendHeight, 300);
-            setTimeout(sendHeight, 600);
+            setTimeout(sendHeight, 200); 
+            setTimeout(sendHeight, 500); 
+            setTimeout(sendHeight, 800); 
+            setTimeout(sendHeight, 1500); 
         }
 
         function triggerAnim(cls) {
@@ -248,13 +298,15 @@
                 gif.src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXk0MHFydnFqeTBramtqem15bGJmYW96ZTE4am13NGk0eHNndzlsciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iO4ptP2iuV29yui3mx/giphy.gif";
             }
             sendHeight();
+            setTimeout(sendHeight, 500); 
         }
 
-        // --- SISTEMA DE ALTURA 100% PRECISO ---
+        // --- SISTEMA DE CÁLCULO DE ALTURA OTIMIZADO ---
         function sendHeight() {
-            // Mede a altura total do documento, incluindo margens
-            const h = document.documentElement.scrollHeight;
-            window.parent.postMessage({ frameHeight: h }, "*");
+            // Mede o documento inteiro
+            const height = document.documentElement.scrollHeight;
+            // Envia para o CMS com +80px de margem de segurança
+            window.parent.postMessage({ frameHeight: height + 80 }, "*");
         }
 
         window.addEventListener('load', sendHeight);
