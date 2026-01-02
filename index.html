@@ -8,44 +8,30 @@
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
         :root { --neon-red: #ff0033; --neon-green: #28a745; --dark-bg: #050505; --glass: rgba(20, 20, 20, 0.95); }
         
-        /* RESET TOTAL PARA EVITAR CORTES */
-        html { min-height: 100%; }
+        /* ESTRUTURA FLUIDA - O SEGREDO DO AUTO-HEIGHT */
+        html { min-height: 100%; height: auto; }
         body { 
-            margin: 0; padding: 0; width: 100%; 
-            /* Importante: permite que o corpo cresça o quanto precisar */
-            height: auto; 
-            min-height: 100vh;
+            margin: 0; padding: 0; width: 100%; height: auto;
             font-family: 'Share Tech Mono', monospace; 
             background-color: var(--dark-bg); 
             color: #e0e0e0; 
             background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            /* Espaço extra no final para scroll seguro */
-            padding-bottom: 80px; 
-            box-sizing: border-box;
-            overflow-x: hidden; /* Apenas esconde scroll lateral */
-            overflow-y: visible; /* Garante que altura seja lida corretamente */
+            display: flex; flex-direction: column; align-items: center; 
+            overflow: hidden; /* O iframe vai controlar o scroll, não o body */
+            padding-bottom: 20px;
         }
         
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMikiLz48L3N2Zz4='); animation: floating 60s linear infinite; pointer-events: none; z-index: 0; opacity: 0.6; }
         .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; pointer-events: none; z-index: 10; }
         
         .quiz-container { 
-            position: relative; 
-            z-index: 1; 
-            background: var(--glass); 
-            backdrop-filter: blur(5px); 
-            padding: 2rem; 
-            border-radius: 15px; 
-            border: 1px solid #333; 
+            position: relative; z-index: 1; 
+            background: var(--glass); backdrop-filter: blur(5px); 
+            padding: 2rem; border-radius: 15px; border: 1px solid #333; 
             box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8); 
-            max-width: 600px; 
-            width: 90%; 
-            margin-top: 40px; /* Margem superior segura */
-            text-align: center; 
-            border-top: 3px solid var(--neon-red); 
+            max-width: 600px; width: 90%; 
+            margin-top: 30px; margin-bottom: 30px;
+            text-align: center; border-top: 3px solid var(--neon-red); 
         }
 
         h1 { font-family: 'Creepster', cursive; color: var(--neon-red); font-size: 3rem; margin: 0 0 20px 0; text-shadow: 0 0 10px var(--neon-red), 0 0 20px black; letter-spacing: 3px; animation: flicker 3s infinite alternate; }
@@ -61,7 +47,6 @@
         .start-btn, .next-btn, .restart-btn { background-color: var(--neon-red); color: white; border: none; padding: 15px 30px; width: 100%; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; margin-top: 15px; border-radius: 5px; transition: 0.3s; }
         .start-btn:hover, .next-btn:hover { background-color: #ff3355; transform: scale(1.02); }
         .start-btn { font-size: 1.5rem; animation: pulseBtn 2s infinite; }
-        
         #feedback-area { display: none; margin-top: 25px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid #333; animation: slideUp 0.3s ease-out; }
         .feedback-img { max-width: 100%; border-radius: 8px; border: 2px solid #fff; margin-top: 10px; }
         .score-display { font-size: 2rem; color: var(--neon-red); margin: 10px 0; }
@@ -73,7 +58,7 @@
         @keyframes flicker { 0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon-red); } 50% { opacity: 0.6; text-shadow: none; } }
         @keyframes pulseBtn { 0% { box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); } 50% { box-shadow: 0 0 30px rgba(255, 0, 51, 0.8); } 100% { box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @media (max-width: 600px) { h1 { font-size: 2rem; } .quiz-container { padding: 1.5rem; width: 95%; margin-top: 20px; } }
+        @media (max-width: 600px) { h1 { font-size: 2rem; } .quiz-container { padding: 1.5rem; width: 95%; } }
     </style>
 </head>
 <body>
@@ -82,7 +67,7 @@
     <audio id="sfx-wrong" preload="auto"><source src="erro.mp3" type="audio/mpeg"></audio>
 
     <div class="scanlines"></div>
-    <div id="main-wrapper" style="width: 100%; display: flex; justify-content: center;">
+    <div id="wrapper" style="width: 100%; display: flex; justify-content: center; align-items: flex-start;">
         <div class="quiz-container" id="main-container">
             <div id="intro-box">
                 <h1>Stranger Quiz</h1>
@@ -215,13 +200,11 @@
                 ui.nextBtn.innerText = "Próxima >>";
             }
             
-            // ATUALIZAÇÃO FORÇADA DE ALTURA
-            // Envia imediatamente
+            // FORÇA ENVIO DE ALTURA VARIAS VEZES (Para pegar o GIF carregando)
             sendHeight();
-            // Envia de novo a cada 200ms para pegar o carregamento do GIF
-            setTimeout(sendHeight, 200); 
-            setTimeout(sendHeight, 500); 
-            setTimeout(sendHeight, 1000); 
+            setTimeout(sendHeight, 100);
+            setTimeout(sendHeight, 300);
+            setTimeout(sendHeight, 600);
         }
 
         function triggerAnim(cls) {
@@ -267,30 +250,16 @@
             sendHeight();
         }
 
-        // --- SISTEMA DE ALTURA CALCULADA (ROBUSTO) ---
+        // --- SISTEMA DE ALTURA 100% PRECISO ---
         function sendHeight() {
-            // Pega o corpo e o HTML
-            const body = document.body;
-            const html = document.documentElement;
-
-            // Calcula a altura real pegando o MAIOR valor entre os métodos
-            // Isso evita que o scrollHeight ignore margens ou posições absolutas
-            const height = Math.max( 
-                body.scrollHeight, 
-                body.offsetHeight, 
-                html.clientHeight, 
-                html.scrollHeight, 
-                html.offsetHeight 
-            );
-
-            // Envia com + 60px de folga para garantir
-            window.parent.postMessage({ frameHeight: height + 60 }, "*");
+            // Mede a altura total do documento, incluindo margens
+            const h = document.documentElement.scrollHeight;
+            window.parent.postMessage({ frameHeight: h }, "*");
         }
 
         window.addEventListener('load', sendHeight);
         window.addEventListener('resize', sendHeight);
-        const resizeObserver = new ResizeObserver(() => sendHeight());
-        resizeObserver.observe(document.body);
+        new ResizeObserver(sendHeight).observe(document.body);
     </script>
 </body>
 </html>
