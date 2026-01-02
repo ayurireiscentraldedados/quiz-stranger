@@ -17,12 +17,13 @@
             background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%);
             display: flex; flex-direction: column; align-items: center; 
             overflow: hidden; 
-            padding-bottom: 100px; /* Margem de segurança */
+            padding-bottom: 150px; /* Margem extra generosa para evitar cortes */
         }
         
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMikiLz48L3N2Zz4='); animation: floating 60s linear infinite; pointer-events: none; z-index: -1; opacity: 0.6; }
         .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; pointer-events: none; z-index: 10; }
         
+        /* BOTÃO MUTE */
         .mute-btn {
             position: fixed; top: 10px; right: 10px; z-index: 9999;
             background: rgba(0, 0, 0, 0.8); border: 2px solid var(--neon-red); color: var(--neon-red);
@@ -38,7 +39,7 @@
             padding: 2rem; border-radius: 15px; border: 1px solid #333; 
             box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8); 
             max-width: 600px; width: 90%; 
-            margin-top: 50px; 
+            margin-top: 40px; 
             text-align: center; border-top: 3px solid var(--neon-red); 
         }
 
@@ -57,7 +58,7 @@
         .start-btn { font-size: 1.5rem; animation: pulseBtn 2s infinite; }
         
         #feedback-area { display: none; margin-top: 25px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid #333; animation: slideUp 0.3s ease-out; }
-        .feedback-img { max-width: 100%; min-height: 200px; border-radius: 8px; border: 2px solid #fff; margin-top: 10px; background: #111; display: none; /* Começa oculto */ }
+        .feedback-img { max-width: 100%; min-height: 200px; border-radius: 8px; border: 2px solid #fff; margin-top: 10px; background: #111; display: none; }
         
         .score-display { font-size: 2rem; color: var(--neon-red); margin: 10px 0; }
         .credits { margin-top: 30px; font-size: 0.75rem; color: #666; border-top: 1px solid #333; padding-top: 15px; letter-spacing: 1px; opacity: 0.8; }
@@ -96,7 +97,7 @@
                 <div id="feedback-area">
                     <h3 id="feedback-title"></h3>
                     <p id="feedback-msg"></p>
-                    <img id="feedback-gif" class="feedback-img" src="">
+                    <img id="feedback-gif" class="feedback-img" src="" onload="sendHeight()">
                     <button id="next-btn" class="next-btn" onclick="nextQuestion()">Próxima >></button>
                 </div>
             </div>
@@ -104,7 +105,7 @@
                 <h1>Fim da Linha</h1>
                 <p class="score-display"><span id="score"></span> / 17 ACERTOS</p>
                 <p id="final-msg" class="question-text"></p>
-                <img id="final-gif" class="feedback-img" src="">
+                <img id="final-gif" class="feedback-img" src="" onload="sendHeight()">
                 <button class="restart-btn" onclick="location.reload()">Jogar Novamente</button>
             </div>
             <div class="credits">Desenvolvido por: <strong>Ayuri Reis</strong> / Central de dados do <strong>OPOVO+</strong></div>
@@ -155,7 +156,19 @@
         function loadQuestion() {
             const q = questions[currentIdx]; ui.currentQ.innerText = currentIdx + 1; ui.questionText.innerText = q.q; ui.options.innerHTML = ''; ui.feedbackArea.style.display = 'none';
             q.opts.forEach((opt, idx) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = opt; btn.onclick = () => checkAnswer(idx, btn); ui.options.appendChild(btn); });
+            
+            // --- O SEGREDO DO "SEM DELAY" ---
+            // Baixa a PRÓXIMA imagem agora, enquanto o usuário lê a pergunta atual.
+            preloadNextImage();
             sendHeight();
+        }
+
+        // Função mágica para baixar imagem em background
+        function preloadNextImage() {
+            if (currentIdx + 1 < questions.length) {
+                const nextImg = new Image();
+                nextImg.src = questions[currentIdx + 1].gif;
+            }
         }
 
         function checkAnswer(idx, btn) {
@@ -164,19 +177,23 @@
             else { btn.classList.add('wrong'); document.querySelectorAll('.option-btn')[q.a].classList.add('correct'); ui.feedbackTitle.innerText = "ERRADO"; ui.feedbackTitle.style.color = "var(--neon-red)"; triggerAnim('glitch-overlay-anim'); sfxWrong.currentTime = 0; sfxWrong.play(); }
             ui.feedbackMsg.innerText = idx === q.a ? "Isso aí!" : `A resposta certa era: ${q.opts[q.a]}`; ui.nextBtn.innerText = currentIdx === questions.length - 1 ? "VER RESULTADO FINAL" : "Próxima >>";
             
-            // CORREÇÃO DO DELAY DA IMAGEM
-            ui.feedbackGif.style.display = 'none'; // Esconde primeiro
-            ui.feedbackGif.src = q.gif; // Carrega a nova
+            // 1. Limpa a imagem antiga ANTES de qualquer coisa (Isso mata o "flash" do antigo)
+            ui.feedbackGif.style.display = 'none';
+            ui.feedbackGif.src = ""; 
+            
+            // 2. Define a nova (que já deve estar no cache pelo preload)
+            ui.feedbackGif.src = q.gif;
+            
             ui.feedbackArea.style.display = 'block';
             
-            // Quando a imagem carregar, mostra ela e ajusta a altura
+            // 3. Quando carregar (deve ser instantâneo), mostra
             ui.feedbackGif.onload = function() {
                 this.style.display = 'block';
                 sendHeight();
             };
 
-            // Garante que o painel de feedback apareça mesmo se a imagem demorar
-            sendHeight();
+            // Loop de segurança de altura
+            sendHeight(); setTimeout(sendHeight, 200); setTimeout(sendHeight, 500); setTimeout(sendHeight, 1000);
         }
 
         function triggerAnim(cls) { const d = document.createElement('div'); d.className = cls; document.body.appendChild(d); setTimeout(() => d.remove(), 600); }
@@ -189,22 +206,15 @@
             else if (score <= 12) { msg.innerText = "Bom, mas cuidado com os Demodogs!"; gif.src = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExazR5NHFydHB6NXk4czJyazM0NGp0YmVnZTU4emRtd2JocjRxbWhtYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dwRJb2uq06LlL7eMMs/giphy.gif"; }
             else if (score <= 16) { msg.innerText = "Excelente! Você quase entrou para o Clube."; gif.src = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXdod3I5aHFjdDRrbTI3M3lsd21qazVlemNlbmZwdmhodng3eTFrZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WSsUgLins3y2Q/giphy.gif"; }
             else { msg.innerText = "PERFEITO! Você é um verdadeiro fã!"; gif.src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXk0MHFydnFqeTBramtqem15bGJmYW96ZTE4am13NGk0eHNndzlsciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iO4ptP2iuV29yui3mx/giphy.gif"; }
-            
-            // Correção para o GIF final também
-            gif.style.display = 'none';
-            gif.onload = function() {
-                this.style.display = 'block';
-                sendHeight();
-            };
-            sendHeight();
+            sendHeight(); setTimeout(sendHeight, 500);
         }
 
         // --- SISTEMA DE CÁLCULO DE ALTURA OTIMIZADO ---
         function sendHeight() {
-            // Mede apenas a caixa do quiz e adiciona 150px de gordura
             const container = document.getElementById('main-container');
             if (container) {
-                const height = container.offsetHeight + 150; 
+                // Aumentei para 200px de segurança para garantir
+                const height = container.offsetHeight + 200; 
                 window.parent.postMessage({ frameHeight: height }, "*");
             }
         }
