@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Stranger Things - Edição Mundo Invertido</title>
+    <title>Quiz Stranger Things</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
 
@@ -27,7 +27,7 @@
             background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%);
         }
 
-        /* PARTICULAS DO MUNDO INVERTIDO */
+        /* EFEITO DE PARTÍCULAS (MUNDO INVERTIDO) */
         body::before {
             content: "";
             position: fixed;
@@ -76,21 +76,25 @@
             animation: flicker 3s infinite alternate;
         }
 
-        .intro-text { font-size: 1.2rem; margin-bottom: 30px; }
-        
-        .question-counter { 
-            font-size: 0.9rem; color: #888; margin-bottom: 15px; 
-            border-bottom: 1px solid #333; padding-bottom: 10px; display: inline-block; 
+        .intro-text {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
         }
 
-        .question-text { 
-            font-size: 1.3rem; margin-bottom: 30px; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5); line-height: 1.5; 
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.5;
         }
 
-        .options-container { display: flex; flex-direction: column; gap: 15px; }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-        /* ESTILO DOS BOTÕES DE OPÇÃO */
+        /* BOTÕES DE OPÇÃO */
         .option-btn {
             background: linear-gradient(90deg, #111, #1a1a1a);
             color: #fff;
@@ -101,74 +105,141 @@
             font-family: inherit;
             font-size: 1rem;
             text-align: left;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
-        .option-btn::before { 
-            content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 4px; 
-            background: var(--neon-red); transform: scaleY(0); transition: transform 0.3s; 
-        }
-        .option-btn:hover:not(:disabled) { 
-            transform: translateX(5px); background: #222; 
-            box-shadow: 0 0 15px rgba(255, 0, 51, 0.2); border-color: var(--neon-red); 
-        }
-        .option-btn:hover::before { transform: scaleY(1); }
-        .option-btn:disabled { opacity: 0.7; cursor: not-allowed; filter: grayscale(0.8); }
 
-        /* ESTADOS DE ACERTO/ERRO */
-        .correct { 
-            background: linear-gradient(90deg, #0f3d0f, #1e5c1e) !important; 
-            border-color: var(--neon-green) !important; 
-            box-shadow: 0 0 25px rgba(40, 167, 69, 0.6) !important; 
-        }
-        .wrong { 
-            background: linear-gradient(90deg, #3d0f0f, #5c1e1e) !important; 
-            border-color: var(--neon-red) !important; 
-            animation: shake 0.5s; 
+        .option-btn::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 0; height: 100%; width: 4px;
+            background: var(--neon-red);
+            transform: scaleY(0);
+            transition: transform 0.3s;
         }
 
-        /* BOTÕES DE AÇÃO (START, NEXT, RESTART) */
-        .next-btn, .restart-btn, .start-btn { 
-            background-color: var(--neon-red); color: white; border: none; 
-            padding: 15px 30px; width: 100%; font-size: 1.1rem; 
-            font-family: inherit; font-weight: bold; text-transform: uppercase; 
-            letter-spacing: 2px; cursor: pointer; margin-top: 15px; 
-            border-radius: 5px; box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); 
-            transition: 0.3s; 
+        .option-btn:hover:not(:disabled) {
+            transform: translateX(5px);
+            background: #222;
+            border-color: var(--neon-red);
+            box-shadow: 0 0 15px rgba(255, 0, 51, 0.2);
         }
-        .next-btn:hover, .restart-btn:hover, .start-btn:hover { 
-            background-color: #ff3355; box-shadow: 0 0 25px rgba(255, 0, 51, 0.6); 
-            transform: scale(1.02); 
-        }
-        .start-btn { font-size: 1.5rem; animation: pulseBtn 2s infinite; }
 
-        /* FEEDBACK AREA */
-        #feedback-area { 
-            display: none; margin-top: 25px; background: rgba(0,0,0,0.5); 
-            padding: 15px; border-radius: 10px; border: 1px solid #333; 
-            animation: slideUp 0.3s ease-out; 
+        .option-btn:hover::before {
+            transform: scaleY(1);
         }
-        .feedback-img { 
-            max-width: 100%; border-radius: 8px; border: 2px solid #fff; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-top: 10px; 
-        }
-        
-        .score-display { font-size: 2rem; color: var(--neon-red); margin: 10px 0; text-shadow: 0 0 10px rgba(255,0,51,0.5); }
-        .credits { margin-top: 30px; font-size: 0.75rem; color: #666; border-top: 1px solid #333; padding-top: 15px; letter-spacing: 1px; opacity: 0.8; }
-        .credits strong { color: #999; }
 
-        /* ANIMAÇÕES (KEYFRAMES) */
-        .correct-flash-anim { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; animation: flash-green 0.6s ease-out forwards; }
-        .glitch-overlay-anim { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; background: rgba(255, 0, 51, 0.1); mix-blend-mode: hard-light; animation: glitch-screen 0.5s linear forwards; }
-        
+        .option-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+
+        .correct {
+            background: linear-gradient(90deg, #0f3d0f, #1e5c1e) !important;
+            border-color: var(--neon-green) !important;
+            box-shadow: 0 0 25px rgba(40, 167, 69, 0.6) !important;
+        }
+
+        .wrong {
+            background: linear-gradient(90deg, #3d0f0f, #5c1e1e) !important;
+            border-color: var(--neon-red) !important;
+            animation: shake 0.5s;
+        }
+
+        /* BOTÕES DE NAVEGAÇÃO */
+        .start-btn, .next-btn, .restart-btn {
+            background-color: var(--neon-red);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin-top: 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(255, 0, 51, 0.4);
+        }
+
+        .start-btn:hover, .next-btn:hover, .restart-btn:hover {
+            background-color: #ff3355;
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(255, 0, 51, 0.6);
+        }
+
+        .start-btn {
+            font-size: 1.5rem;
+            animation: pulseBtn 2s infinite;
+        }
+
+        /* ÁREA DE FEEDBACK */
+        #feedback-area {
+            display: none;
+            margin-top: 25px;
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .feedback-img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 2px solid #fff;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .score-display {
+            font-size: 2rem;
+            color: var(--neon-red);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(255,0,51,0.5);
+        }
+
+        .credits {
+            margin-top: 30px;
+            font-size: 0.75rem;
+            color: #666;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .credits strong {
+            color: #999;
+        }
+
+        /* ANIMAÇÕES */
+        .correct-flash-anim {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 20;
+            animation: flash-green 0.6s ease-out forwards;
+        }
+
+        .glitch-overlay-anim {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 100;
+            background: rgba(255, 0, 51, 0.1);
+            mix-blend-mode: hard-light;
+            animation: glitch-screen 0.5s linear forwards;
+        }
+
         @keyframes flash-green { 0% { background-color: rgba(40, 167, 69, 0.4); } 100% { background-color: transparent; } }
         @keyframes glitch-screen { 
             0% { transform: translate(0); filter: hue-rotate(0deg); } 
             20% { transform: translate(-5px, 5px); filter: hue-rotate(90deg); } 
             40% { transform: translate(5px, -5px); filter: hue-rotate(180deg); } 
             60% { transform: translate(-5px, 5px); filter: hue-rotate(270deg); } 
-            80% { transform: translate(5px, -5px); } 100% { transform: translate(0); filter: hue-rotate(0deg); } 
+            80% { transform: translate(5px, -5px); } 
+            100% { transform: translate(0); filter: hue-rotate(0deg); } 
         }
         @keyframes floating { from { background-position: 0 0; } to { background-position: 0 600px; } }
         @keyframes flicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon-red), 0 0 20px black; } 20%, 24%, 55% { opacity: 0.6; text-shadow: none; } }
@@ -176,7 +247,7 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulseBtn { 0% { box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); } 50% { box-shadow: 0 0 30px rgba(255, 0, 51, 0.8); } 100% { box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); } }
 
-        @media (max-width: 600px) { h1 { font-size: 2rem; } .quiz-container { padding: 1.5rem; width: 85%; } .question-text { font-size: 1.1rem; } }
+        @media (max-width: 600px) { h1 { font-size: 2rem; } .quiz-container { padding: 1.5rem; width: 95%; } }
     </style>
 </head>
 <body>
@@ -198,15 +269,18 @@
 
         <div id="quiz-box" style="display: none;">
             <h1>Stranger Quiz</h1>
-            <div class="question-counter">Pergunta <span id="current-q">1</span> / <span id="total-q">17</span></div>
+            <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; display: inline-block;">
+                PERGUNTA <span id="current-q">1</span> DE 17
+            </p>
             <div id="question-text" class="question-text">Carregando...</div>
-            <div id="options" class="options-container"></div>
             
+            <div id="options" class="options-container"></div>
+
             <div id="feedback-area">
                 <h3 id="feedback-title" style="margin: 0; font-size: 1.2rem;"></h3>
                 <p id="feedback-msg" style="color: #ccc; font-size: 0.9rem; margin: 5px 0;"></p>
                 <img id="feedback-gif" class="feedback-img" src="" alt="Reação">
-                <button id="next-btn" class="next-btn" onclick="nextQuestion()">Próxima >> </button>
+                <button id="next-btn" class="next-btn" onclick="nextQuestion()">Próxima >></button>
             </div>
         </div>
 
@@ -215,7 +289,7 @@
             <p class="score-display"><span id="score"></span> / 17 ACERTOS</p>
             <p id="final-msg" class="question-text"></p>
             <img id="final-gif" class="feedback-img" src="" alt="Resultado">
-            <button class="restart-btn" onclick="location.reload()">Tentar Novamente</button>
+            <button class="restart-btn" onclick="location.reload()">Jogar Novamente</button>
         </div>
 
         <div class="credits">
@@ -224,35 +298,119 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DOS ÁUDIOS
+        // --- CONFIGURAÇÃO DOS ÁUDIOS ---
         const bgMusic = document.getElementById('bg-music');
         const sfxCorrect = document.getElementById('sfx-correct');
         const sfxWrong = document.getElementById('sfx-wrong');
 
-        // Volumes (0.0 a 1.0)
-        bgMusic.volume = 0.3;
+        bgMusic.volume = 0.4;
         sfxCorrect.volume = 0.6;
         sfxWrong.volume = 0.5;
 
-        // BANCO DE PERGUNTAS COMPLETO (17 Perguntas)
+        // --- BANCO DE PERGUNTAS COMPLETO ---
         const questions = [
-            { q: "Em que cidade se passa Stranger Things?", opts: ["Chicago", "Nova York", "Seattle", "Hawkins"], a: 3, gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3NoeHB4cjFhYTZwNXI3b3lkdXY4cXBmNGM2NGNjODZqM3N4bzlmdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/T9JPznkGDAxYC8m7yC/giphy.gif" },
-            { q: "Quem desaparece no início da 1ª temporada?", opts: ["Will Byers", "Mike Wheeler", "Dustin Henderson", "Lucas Sinclair"], a: 0, gif: "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2NyOHRoMGg4cWcyYmdibTI5b2lyYzc4MHl3cnVjcHQ5MmJ4bjgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/AhAAsOxyXb3bKQuK2u/giphy.gif" },
-            { q: "Qual é o nome da garota com poderes?", opts: ["Max", "Eleven", "Nancy", "Erica"], a: 1, gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZG1hdHNxb2JjbDFuN3FpOWZubGF5OXNxZjlzcHg5bGk5aXQ1Z3plNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/BpZ6GCgB5WJCU/giphy.gif" },
-            { q: "Qual monstro aparece na 1ª temporada?", opts: ["Vecna", "Devorador de Mentes", "Demogorgon", "Demodog"], a: 2, gif: "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXVucW0wcWRxdzEzNzhsamkyY3h4cG83ZG4zbHJxODFodGRmc2I1NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l378fCBfWv5TnkSTC/giphy.gif" },
-            { q: "Qual é o nome da dimensão paralela?", opts: ["Outro Mundo", "Submundo", "Dimensão X", "Mundo Invertido"], a: 3, gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzl6b3p4bHFmeDR5dmh0eW1pZXl4MDZneWRicThsNjB4cGljeHdvaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/F1cehBDCMnsukCPUXo/giphy.gif" },
-            { q: "Onde fica o laboratório secreto?", opts: ["Hawkins Lab", "Laboratório Nacional", "Base Militar", "Hospital de Hawkins"], a: 0, gif: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3FmNnpyendtcWlydmU4ZWRodjc1eG1mOG1mNmxlbDVrOHZucHpkcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rJJBtuKBmZeX52QI6l/giphy.gif" },
-            { q: "Qual é a comida favorita da Eleven?", opts: ["Pizza", "Sorvete", "Waffles", "Hambúrguer"], a: 2, gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjEwempzeTQ0anNzcTJ3aGdxNjBpcXhzdjZlN3pyZTB4M3dpNTZkOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlESI0mzccH7ai4/giphy.gif" },
-            { q: "Quem é o líder do grupo de amigos?", opts: ["Dustin", "Lucas", "Mike", "Will"], a: 2, gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGt5Y2dmYWF0eTl1NzM4M3YyMGs3anN5YTBxbGtjYXdseGxxNW12YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ov9jGYIDq9GcXoKEE/giphy.gif" },
-            { q: "Quem é o chefe de polícia de Hawkins?", opts: ["Hopper", "Steve", "Jonathan", "Murray"], a: 0, gif: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3E5bHBjc3p4NGJ1amY0d2x5a2txazVtM3M4YWVlOXc5bW9ubjVzNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZXqOCQLK8BKquLx56V/giphy.gif" },
-            { q: "Qual jogo os meninos jogam juntos?", opts: ["Banco Imobiliário", "War", "Dungeons & Dragons", "Xadrez"], a: 2, gif: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGNrZWR0ODFmZTZjOXZ5M2Q5NXN2Y2NqZ25ycDJ6bmRzazA1Nmw0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT1TU05efwF5YtaXdK/giphy.gif" },
-            { q: "Qual é o sobrenome da Eleven na primeira temporada?", opts: ["Byers", "Não tem", "Hopper", "Wheeler"], a: 1, gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXE3MGR2ZmRnY3M2MnBrMmRqNmtocm0yMjdjbXhub3N2Y2QxdjA5NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/sH5P7fo4RKXNzoTN2z/giphy.gif" },
-            { q: "Quem é a mãe de Will?", opts: ["Joyce", "Karen", "Nancy", "Max"], a: 0, gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExN21tZzcyOGp6NmthazRuZ2VvZDNuOW92dWwzOHQzeHJvY2x2OHRwZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ohhwDOhbwbhUozFSw/giphy.gif" },
-            { q: "Quem é a irmã de Lucas?", opts: ["Max", "Erica", "Eleven", "Nancy"], a: 1, gif: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTNjeWlpYnVnbzJ6czd0NmkxdnFmdTY3N2p4bjF5a2Y5Y3hwMWs5MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/f9N92aKz8Pp4wsk8HF/giphy.gif" },
-            { q: "Qual personagem usa boné e é engraçado?", opts: ["Will", "Lucas", "Dustin", "Mike"], a: 2, gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2JrNG1id2c5NWs1aGU0ZnFvYjJsZjhvcmQ1NDRmcHNxeXFhNHBmMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oxHQhHCg7VNlMJh04/giphy.gif" },
-            { q: "Quem trabalha no laboratório de Hawkins?", opts: ["Hopper", "Dr. Brenner", "Murray", "Steve"], a: 1, gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDljamJ6aGdhejFob2toZXk5OW95aGtxdDk0ZnFnemEyNmxzN2RnZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xTcf0TqeqsUF9juNR6/giphy.gif" },
-            { q: "Qual personagem tem um taco com pregos?", opts: ["Jonathan", "Hopper", "Steve", "Lucas"], a: 2, gif: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3pucGZwaDcxczlva2IzbHFubzA3bDZiaGJ2dmM5Nzd4bnVnbzBncyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT4ApolYFI1XAgc920/giphy.gif" },
-            { q: "Como o grupo chama a si mesmo?", opts: ["Os Nerds", "The Party", "Os Quatro", "Clube de Hawkins"], a: 1, gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmx0ZDNtMmVvem16bWxrcTJmYzN1cHp0eWk0c2JpNWRiM2Vyd2x6bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9Igix0cQtPCKSvV6/giphy.gif" }
+            {
+                q: "Em que cidade se passa Stranger Things?",
+                opts: ["Chicago", "Nova York", "Seattle", "Hawkins"],
+                a: 3,
+                gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3NoeHB4cjFhYTZwNXI3b3lkdXY4cXBmNGM2NGNjODZqM3N4bzlmdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/T9JPznkGDAxYC8m7yC/giphy.gif"
+            },
+            {
+                q: "Quem desaparece no início da 1ª temporada?",
+                opts: ["Will Byers", "Mike Wheeler", "Dustin Henderson", "Lucas Sinclair"],
+                a: 0,
+                gif: "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2NyOHRoMGg4cWcyYmdibTI5b2lyYzc4MHl3cnVjcHQ5MmJ4bjgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/AhAAsOxyXb3bKQuK2u/giphy.gif"
+            },
+            {
+                q: "Qual é o nome da garota com poderes?",
+                opts: ["Max", "Eleven", "Nancy", "Erica"],
+                a: 1,
+                gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZG1hdHNxb2JjbDFuN3FpOWZubGF5OXNxZjlzcHg5bGk5aXQ1Z3plNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/BpZ6GCgB5WJCU/giphy.gif"
+            },
+            {
+                q: "Qual monstro aparece na 1ª temporada?",
+                opts: ["Vecna", "Devorador de Mentes", "Demogorgon", "Demodog"],
+                a: 2,
+                gif: "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXVucW0wcWRxdzEzNzhsamkyY3h4cG83ZG4zbHJxODFodGRmc2I1NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l378fCBfWv5TnkSTC/giphy.gif"
+            },
+            {
+                q: "Qual é o nome da dimensão paralela?",
+                opts: ["Outro Mundo", "Submundo", "Dimensão X", "Mundo Invertido"],
+                a: 3,
+                gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzl6b3p4bHFmeDR5dmh0eW1pZXl4MDZneWRicThsNjB4cGljeHdvaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/F1cehBDCMnsukCPUXo/giphy.gif"
+            },
+            {
+                q: "Onde fica o laboratório secreto?",
+                opts: ["Hawkins Lab", "Laboratório Nacional", "Base Militar", "Hospital de Hawkins"],
+                a: 0,
+                gif: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3FmNnpyendtcWlydmU4ZWRodjc1eG1mOG1mNmxlbDVrOHZucHpkcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rJJBtuKBmZeX52QI6l/giphy.gif"
+            },
+            {
+                q: "Qual é a comida favorita da Eleven?",
+                opts: ["Pizza", "Sorvete", "Waffles", "Hambúrguer"],
+                a: 2,
+                gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjEwempzeTQ0anNzcTJ3aGdxNjBpcXhzdjZlN3pyZTB4M3dpNTZkOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlESI0mzccH7ai4/giphy.gif"
+            },
+            {
+                q: "Quem é o líder do grupo de amigos?",
+                opts: ["Dustin", "Lucas", "Mike", "Will"],
+                a: 2,
+                gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGt5Y2dmYWF0eTl1NzM4M3YyMGs3anN5YTBxbGtjYXdseGxxNW12YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ov9jGYIDq9GcXoKEE/giphy.gif"
+            },
+            {
+                q: "Quem é o chefe de polícia de Hawkins?",
+                opts: ["Hopper", "Steve", "Jonathan", "Murray"],
+                a: 0,
+                gif: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3E5bHBjc3p4NGJ1amY0d2x5a2txazVtM3M4YWVlOXc5bW9ubjVzNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZXqOCQLK8BKquLx56V/giphy.gif"
+            },
+            {
+                q: "Qual jogo os meninos jogam juntos?",
+                opts: ["Banco Imobiliário", "War", "Dungeons & Dragons", "Xadrez"],
+                a: 2,
+                gif: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGNrZWR0ODFmZTZjOXZ5M2Q5NXN2Y2NqZ25ycDJ6bmRzazA1Nmw0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT1TU05efwF5YtaXdK/giphy.gif"
+            },
+            {
+                q: "Qual é o sobrenome da Eleven na primeira temporada?",
+                opts: ["Byers", "Não tem", "Hopper", "Wheeler"],
+                a: 1,
+                gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXE3MGR2ZmRnY3M2MnBrMmRqNmtocm0yMjdjbXhub3N2Y2QxdjA5NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/sH5P7fo4RKXNzoTN2z/giphy.gif"
+            },
+            {
+                q: "Quem é a mãe de Will?",
+                opts: ["Joyce", "Karen", "Nancy", "Max"],
+                a: 0,
+                gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExN21tZzcyOGp6NmthazRuZ2VvZDNuOW92dWwzOHQzeHJvY2x2OHRwZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ohhwDOhbwbhUozFSw/giphy.gif"
+            },
+            {
+                q: "Quem é a irmã de Lucas?",
+                opts: ["Max", "Erica", "Eleven", "Nancy"],
+                a: 1,
+                gif: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTNjeWlpYnVnbzJ6czd0NmkxdnFmdTY3N2p4bjF5a2Y5Y3hwMWs5MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/f9N92aKz8Pp4wsk8HF/giphy.gif"
+            },
+            {
+                q: "Qual personagem usa boné e é engraçado?",
+                opts: ["Will", "Lucas", "Dustin", "Mike"],
+                a: 2,
+                gif: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2JrNG1id2c5NWs1aGU0ZnFvYjJsZjhvcmQ1NDRmcHNxeXFhNHBmMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oxHQhHCg7VNlMJh04/giphy.gif"
+            },
+            {
+                q: "Quem trabalha no laboratório de Hawkins?",
+                opts: ["Hopper", "Dr. Brenner", "Murray", "Steve"],
+                a: 1,
+                gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDljamJ6aGdhejFob2toZXk5OW95aGtxdDk0ZnFnemEyNmxzN2RnZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xTcf0TqeqsUF9juNR6/giphy.gif"
+            },
+            {
+                q: "Qual personagem tem um taco com pregos?",
+                opts: ["Jonathan", "Hopper", "Steve", "Lucas"],
+                a: 2,
+                gif: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3pucGZwaDcxczlva2IzbHFubzA3bDZiaGJ2dmM5Nzd4bnVnbzBncyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT4ApolYFI1XAgc920/giphy.gif"
+            },
+            {
+                q: "Como o grupo chama a si mesmo?",
+                opts: ["Os Nerds", "The Party", "Os Quatro", "Clube de Hawkins"],
+                a: 1,
+                gif: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmx0ZDNtMmVvem16bWxrcTJmYzN1cHp0eWk0c2JpNWRiM2Vyd2x6bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9Igix0cQtPCKSvV6/giphy.gif"
+            }
         ];
 
         let currentIdx = 0;
@@ -263,8 +421,8 @@
             mainContainer: document.getElementById('main-container'),
             quizBox: document.getElementById('quiz-box'),
             resultBox: document.getElementById('result-box'),
-            questionText: document.getElementById('question-text'),
             currentQ: document.getElementById('current-q'),
+            questionText: document.getElementById('question-text'),
             options: document.getElementById('options'),
             feedbackArea: document.getElementById('feedback-area'),
             feedbackTitle: document.getElementById('feedback-title'),
@@ -273,16 +431,11 @@
             nextBtn: document.getElementById('next-btn')
         };
 
-        // INICIAR
         function startQuiz() {
             ui.introBox.style.display = 'none';
             ui.quizBox.style.display = 'block';
-            
-            // Tenta tocar a música (pode falhar se o navegador bloquear, por isso o .catch)
-            bgMusic.play().catch(error => {
-                console.log("Autoplay bloqueado pelo navegador, interação necessária:", error);
-            });
-            
+            bgMusic.load();
+            bgMusic.play().catch(e => console.log(e));
             loadQuestion();
         }
 
@@ -302,53 +455,44 @@
             });
         }
 
-        function checkAnswer(selectedIdx, btnElement) {
+        function checkAnswer(idx, btn) {
             const q = questions[currentIdx];
-            const buttons = document.querySelectorAll('.option-btn');
-            buttons.forEach(b => b.disabled = true);
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
 
-            if (selectedIdx === q.a) {
+            if (idx === q.a) {
                 score++;
-                btnElement.classList.add('correct');
+                btn.classList.add('correct');
                 ui.feedbackTitle.innerText = "CORRETO";
                 ui.feedbackTitle.style.color = "var(--neon-green)";
-                triggerCorrectAnim();
-                
+                triggerAnim('correct-flash-anim');
                 sfxCorrect.currentTime = 0;
                 sfxCorrect.play();
             } else {
-                btnElement.classList.add('wrong');
-                buttons[q.a].classList.add('correct');
+                btn.classList.add('wrong');
+                document.querySelectorAll('.option-btn')[q.a].classList.add('correct');
                 ui.feedbackTitle.innerText = "ERRADO";
                 ui.feedbackTitle.style.color = "var(--neon-red)";
-                triggerWrongAnim();
-                
+                triggerAnim('glitch-overlay-anim');
                 sfxWrong.currentTime = 0;
                 sfxWrong.play();
             }
 
-            ui.feedbackMsg.innerText = selectedIdx === q.a ? "Isso aí!" : `A resposta certa era: ${q.opts[q.a]}`;
+            ui.feedbackMsg.innerText = idx === q.a ? "Isso aí!" : `A resposta certa era: ${q.opts[q.a]}`;
             ui.feedbackGif.src = q.gif;
             ui.feedbackArea.style.display = 'block';
 
             if (currentIdx === questions.length - 1) {
                 ui.nextBtn.innerText = "VER RESULTADO FINAL";
+            } else {
+                ui.nextBtn.innerText = "Próxima >>";
             }
         }
 
-        // ANIMAÇÕES VISUAIS
-        function triggerCorrectAnim() {
-            const flash = document.createElement('div');
-            flash.className = 'correct-flash-anim';
-            ui.mainContainer.appendChild(flash);
-            setTimeout(() => flash.remove(), 600);
-        }
-
-        function triggerWrongAnim() {
-            const glitch = document.createElement('div');
-            glitch.className = 'glitch-overlay-anim';
-            document.body.appendChild(glitch);
-            setTimeout(() => glitch.remove(), 500);
+        function triggerAnim(cls) {
+            const d = document.createElement('div');
+            d.className = cls;
+            document.body.appendChild(d);
+            setTimeout(() => d.remove(), 600);
         }
 
         function nextQuestion() {
@@ -366,23 +510,38 @@
             document.getElementById('score').innerText = score;
             bgMusic.pause();
 
-            const finalMsg = document.getElementById('final-msg');
-            const finalGif = document.getElementById('final-gif');
+            const msg = document.getElementById('final-msg');
+            const gif = document.getElementById('final-gif');
             
             if (score <= 5) {
-                finalMsg.innerText = "Você ficou preso no Mundo Invertido!";
-                finalGif.src = "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbGQ2ODh6dzlvMTd3N2pseWQwMHo1aGRzN2lycm5wNWRwZ3o3NnR4OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/riZIWvIHbF7p4wRFf6/giphy.gif";
+                msg.innerText = "Você ficou preso no Mundo Invertido!";
+                gif.src = "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbGQ2ODh6dzlvMTd3N2pseWQwMHo1aGRzN2lycm5wNWRwZ3o3NnR4OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/riZIWvIHbF7p4wRFf6/giphy.gif";
             } else if (score <= 12) {
-                finalMsg.innerText = "Bom, mas cuidado com os Demodogs!";
-                finalGif.src = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExazR5NHFydHB6NXk4czJyazM0NGp0YmVnZTU4emRtd2JocjRxbWhtYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dwRJb2uq06LlL7eMMs/giphy.gif";
+                msg.innerText = "Bom, mas cuidado com os Demodogs!";
+                gif.src = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExazR5NHFydHB6NXk4czJyazM0NGp0YmVnZTU4emRtd2JocjRxbWhtYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dwRJb2uq06LlL7eMMs/giphy.gif";
             } else if (score <= 16) {
-                finalMsg.innerText = "Excelente! Você quase entrou para o Clube.";
-                finalGif.src = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXdod3I5aHFjdDRrbTI3M3lsd21qazVlemNlbmZwdmhodng3eTFrZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WSsUgLins3y2Q/giphy.gif";
+                msg.innerText = "Excelente! Você quase entrou para o Clube.";
+                gif.src = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXdod3I5aHFjdDRrbTI3M3lsd21qazVlemNlbmZwdmhodng3eTFrZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WSsUgLins3y2Q/giphy.gif";
             } else {
-                finalMsg.innerText = "PERFEITO! Você é um verdadeiro fã!";
-                finalGif.src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXk0MHFydnFqeTBramtqem15bGJmYW96ZTE4am13NGk0eHNndzlsciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iO4ptP2iuV29yui3mx/giphy.gif";
+                msg.innerText = "PERFEITO! Você é um verdadeiro fã!";
+                gif.src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXk0MHFydnFqeTBramtqem15bGJmYW96ZTE4am13NGk0eHNndzlsciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iO4ptP2iuV29yui3mx/giphy.gif";
             }
         }
+
+        // --- SISTEMA DE AUTO-ALTURA (Importante para o embed) ---
+        function sendHeight() {
+            const height = document.body.scrollHeight;
+            // Envia a altura para a página "pai" (o site O POVO)
+            window.parent.postMessage({ frameHeight: height }, "*");
+        }
+
+        // Envia ao carregar
+        window.addEventListener('load', sendHeight);
+        // Envia ao mudar o tamanho da janela
+        window.addEventListener('resize', sendHeight);
+        // Envia sempre que o conteúdo mudar (ex: GIF aparecer)
+        const observer = new MutationObserver(sendHeight);
+        observer.observe(document.body, { attributes: true, childList: true, subtree: true });
     </script>
 </body>
 </html>
