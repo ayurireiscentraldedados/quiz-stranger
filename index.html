@@ -6,15 +6,40 @@
     <title>Quiz Stranger Things</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
-        :root { --neon-red: #ff0033; --neon-green: #28a745; --dark-bg: #050505; --glass: rgba(20, 20, 20, 0.8); }
+        :root { --neon-red: #ff0033; --neon-green: #28a745; --dark-bg: #050505; --glass: rgba(20, 20, 20, 0.9); }
         
-        html, body { margin: 0; padding: 0; width: 100%; min-height: 0; overflow: hidden; }
-        body { font-family: 'Share Tech Mono', monospace; background-color: var(--dark-bg); color: #e0e0e0; padding: 20px 0; background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%); }
+        /* CORREÇÃO DO CORTE: Permitimos que o corpo cresça livremente */
+        html, body { margin: 0; padding: 0; width: 100%; height: auto; min-height: 100vh; }
+        
+        body { 
+            font-family: 'Share Tech Mono', monospace; 
+            background-color: var(--dark-bg); 
+            color: #e0e0e0; 
+            padding: 40px 0; /* Espaço para não cortar sombras */
+            background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%);
+            display: flex;
+            align-items: flex-start; /* Alinha no topo */
+            justify-content: center;
+        }
         
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMikiLz48L3N2Zz4='); animation: floating 60s linear infinite; pointer-events: none; z-index: 0; opacity: 0.6; }
         .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; pointer-events: none; z-index: 10; }
         
-        .quiz-container { position: relative; z-index: 1; background: var(--glass); backdrop-filter: blur(5px); padding: 2rem; border-radius: 15px; border: 1px solid #333; box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8); max-width: 600px; width: 90%; margin: 0 auto; text-align: center; border-top: 3px solid var(--neon-red); overflow: hidden; }
+        .quiz-container { 
+            position: relative; 
+            z-index: 1; 
+            background: var(--glass); 
+            backdrop-filter: blur(5px); 
+            padding: 2rem; 
+            border-radius: 15px; 
+            border: 1px solid #333; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8); 
+            max-width: 600px; 
+            width: 90%; 
+            text-align: center; 
+            border-top: 3px solid var(--neon-red); 
+        }
+
         h1 { font-family: 'Creepster', cursive; color: var(--neon-red); font-size: 3rem; margin: 0 0 20px 0; text-shadow: 0 0 10px var(--neon-red), 0 0 20px black; letter-spacing: 3px; animation: flicker 3s infinite alternate; }
         .intro-text { font-size: 1.2rem; margin-bottom: 30px; }
         .question-text { font-size: 1.3rem; margin-bottom: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); line-height: 1.5; }
@@ -127,6 +152,7 @@
             bgMusic.load();
             bgMusic.play().catch(e => console.log(e));
             loadQuestion();
+            sendHeight(); // Atualiza altura ao iniciar
         }
 
         function loadQuestion() {
@@ -143,6 +169,7 @@
                 btn.onclick = () => checkAnswer(idx, btn);
                 ui.options.appendChild(btn);
             });
+            sendHeight(); // Atualiza altura ao carregar pergunta
         }
 
         function checkAnswer(idx, btn) {
@@ -176,6 +203,7 @@
             } else {
                 ui.nextBtn.innerText = "Próxima >>";
             }
+            sendHeight(); // Atualiza altura ao mostrar feedback (GIF)
         }
 
         function triggerAnim(cls) {
@@ -189,7 +217,6 @@
             currentIdx++;
             if (currentIdx < questions.length) {
                 loadQuestion();
-                // AQUI ESTÁ A MÁGICA DE ROLAR PRA CIMA
                 window.parent.postMessage({ scrollToTop: true }, "*");
             } else {
                 showFinalResult();
@@ -219,18 +246,24 @@
                 msg.innerText = "PERFEITO! Você é um verdadeiro fã!";
                 gif.src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXk0MHFydnFqeTBramtqem15bGJmYW96ZTE4am13NGk0eHNndzlsciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iO4ptP2iuV29yui3mx/giphy.gif";
             }
+            sendHeight();
         }
 
+        // --- SISTEMA DE ALTURA AUTOMÁTICA OTIMIZADO ---
         function sendHeight() {
+            // Mede a altura do container principal + margem segura
             const quizContainer = document.getElementById('main-container');
             if(quizContainer) {
-                const height = quizContainer.offsetHeight + 40;
+                // Adiciona 60px de margem para garantir que nenhuma sombra seja cortada
+                const height = quizContainer.offsetHeight + 60;
                 window.parent.postMessage({ frameHeight: height }, "*");
             }
         }
 
         window.addEventListener('load', sendHeight);
         window.addEventListener('resize', sendHeight);
+        
+        // Monitora qualquer mudança no corpo (como imagens carregando)
         const resizeObserver = new ResizeObserver(() => sendHeight());
         resizeObserver.observe(document.body);
     </script>
