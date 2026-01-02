@@ -18,8 +18,8 @@
             background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 100%);
             display: flex; flex-direction: column; align-items: center; 
             overflow: hidden; 
-            /* AUMENTAMOS O ESPAÇO EMBAIXO PARA EVITAR CORTE */
-            padding-bottom: 60px; 
+            /* ESPAÇO EXTRA NO FUNDO VISUALMENTE */
+            padding-bottom: 100px; 
         }
         
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMikiLz48L3N2Zz4='); animation: floating 60s linear infinite; pointer-events: none; z-index: -1; opacity: 0.6; }
@@ -41,7 +41,7 @@
             padding: 2rem; border-radius: 15px; border: 1px solid #333; 
             box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8); 
             max-width: 600px; width: 90%; 
-            margin-top: 20px; 
+            margin-top: 50px; /* Mais espaço no topo */
             text-align: center; border-top: 3px solid var(--neon-red); 
         }
 
@@ -168,8 +168,12 @@
             ui.feedbackMsg.innerText = idx === q.a ? "Isso aí!" : `A resposta certa era: ${q.opts[q.a]}`; ui.feedbackGif.src = q.gif; ui.feedbackArea.style.display = 'block';
             ui.nextBtn.innerText = currentIdx === questions.length - 1 ? "VER RESULTADO FINAL" : "Próxima >>";
             
-            // FORÇA ALTURA COM A "GORDURA" EXTRA DE 150px
-            sendHeight(); setTimeout(sendHeight, 200); setTimeout(sendHeight, 500); setTimeout(sendHeight, 1000);
+            // LOOP DE ENVIO PARA GARANTIR ALTURA (5 tentativas)
+            sendHeight(); 
+            setTimeout(sendHeight, 200); 
+            setTimeout(sendHeight, 500); 
+            setTimeout(sendHeight, 800); 
+            setTimeout(sendHeight, 1500);
         }
 
         function triggerAnim(cls) { const d = document.createElement('div'); d.className = cls; document.body.appendChild(d); setTimeout(() => d.remove(), 600); }
@@ -185,11 +189,15 @@
             sendHeight(); setTimeout(sendHeight, 500);
         }
 
-        // --- CÁLCULO DE ALTURA COM "FOLGA EXTRA" ---
+        // --- SISTEMA DE CÁLCULO DE ALTURA AJUSTADO ---
         function sendHeight() {
-            const height = document.documentElement.scrollHeight;
-            // AQUI ESTÁ A MÁGICA: +150px GARANTIDOS PARA O BOTÃO PRÓXIMA
-            window.parent.postMessage({ frameHeight: height + 150 }, "*");
+            // Mede apenas a caixa do quiz
+            const container = document.getElementById('main-container');
+            if (container) {
+                // Adiciona 150px de margem fixa para nunca cortar
+                const height = container.offsetHeight + 150; 
+                window.parent.postMessage({ frameHeight: height }, "*");
+            }
         }
 
         window.addEventListener('load', sendHeight);
