@@ -56,9 +56,19 @@
         .start-btn:hover, .next-btn:hover { background-color: #ff3355; transform: scale(1.02); }
         .start-btn { font-size: 1.5rem; animation: pulseBtn 2s infinite; }
         
-        #feedback-area { display: none; margin-top: 25px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid #333; animation: slideUp 0.3s ease-out; }
-        /* CORREÇÃO DE CENTRALIZAÇÃO AQUI: margin: 10px auto; */
-        .feedback-img { max-width: 100%; min-height: 200px; border-radius: 8px; border: 2px solid #fff; margin: 10px auto; background: #111; display: none; }
+        /* CORREÇÃO CSS PARA CENTRALIZAR */
+        #feedback-area { display: none; margin-top: 25px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid #333; animation: slideUp 0.3s ease-out; text-align: center; }
+        
+        .feedback-img { 
+            max-width: 100%; 
+            min-height: 200px; 
+            border-radius: 8px; 
+            border: 2px solid #fff; 
+            margin-top: 15px; /* Espaço em cima */
+            margin-bottom: 15px; /* Espaço embaixo */
+            background: #111; 
+            display: none; /* Começa invisível */
+        }
         
         .score-display { font-size: 2rem; color: var(--neon-red); margin: 10px 0; }
         .credits { margin-top: 30px; font-size: 0.75rem; color: #666; border-top: 1px solid #333; padding-top: 15px; letter-spacing: 1px; opacity: 0.8; }
@@ -157,12 +167,11 @@
             const q = questions[currentIdx]; ui.currentQ.innerText = currentIdx + 1; ui.questionText.innerText = q.q; ui.options.innerHTML = ''; ui.feedbackArea.style.display = 'none';
             q.opts.forEach((opt, idx) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = opt; btn.onclick = () => checkAnswer(idx, btn); ui.options.appendChild(btn); });
             
-            // --- O SEGREDO DO "SEM DELAY" ---
+            // PRELOAD DA PRÓXIMA IMAGEM
             preloadNextImage();
             sendHeight();
         }
 
-        // Função mágica para baixar imagem em background
         function preloadNextImage() {
             if (currentIdx + 1 < questions.length) {
                 const nextImg = new Image();
@@ -184,7 +193,8 @@
             ui.feedbackArea.style.display = 'block';
             
             ui.feedbackGif.onload = function() {
-                this.style.display = 'block';
+                // AQUI ESTÁ A CORREÇÃO: Usamos 'inline-block' para respeitar a centralização
+                this.style.display = 'inline-block';
                 sendHeight();
             };
 
@@ -204,7 +214,8 @@
             
             gif.style.display = 'none';
             gif.onload = function() {
-                this.style.display = 'block';
+                // CORREÇÃO TAMBÉM NO RESULTADO FINAL
+                this.style.display = 'inline-block';
                 sendHeight();
             };
             sendHeight(); setTimeout(sendHeight, 500);
@@ -214,7 +225,6 @@
         function sendHeight() {
             const container = document.getElementById('main-container');
             if (container) {
-                // Mantendo a margem de +200px
                 const height = container.offsetHeight + 200; 
                 window.parent.postMessage({ frameHeight: height }, "*");
             }
